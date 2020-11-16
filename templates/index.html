@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../static/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+
+<h2>Cardstalker</h2>
+
+<div class="container">
+    <form action="{{ url_for('card_stalker')}}" method="POST">
+
+        <div class="row">
+            <div class="col-25">
+                <label for="cardlink">Card Link</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="cardlink" name="cardlink" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label>Language</label>
+            </div>
+            <div class="col-75">
+                <select name="locale">
+                    <option value="1">English</option>
+                    <option value=3">German</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label>Foil</label>
+            </div>
+            <div class="col-75">
+                <select name="foil">
+                    <option value="Y">Yes</option>
+                    <option value="">Any</option>
+                    <option value="N">No</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="mail">Mail</label>
+            </div>
+            <div class="col-75">
+                <input type="email" id="mail" name="mail" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="price">React at price (in euro)</label>
+            </div>
+            <div class="col-75">
+                <input type="number" id="price" name="price" min="1" step="any">
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+    <div class="row">
+        <div class="message">
+        </div>
+    </div>
+    <br>
+
+</div>
+</body>
+</html>
