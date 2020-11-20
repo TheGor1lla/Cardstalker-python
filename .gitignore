@@ -125,5 +125,4 @@ venv.bak/
 dmypy.json
 
 # generated files
-cardlist.csv
 /db.json

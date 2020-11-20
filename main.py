@@ -1,4 +1,3 @@
-import csv
 import uuid
 
 import requests
@@ -12,25 +11,25 @@ db = TinyDB('./db.json')
 
 @app.route('/check_card')
 def check_card():
-    # nimmt die erste karte
-    # holt sich min preis
-    # erhöht min preis um X
-    # checkt ob aktueller preis < min preis
-    # wenn:
-    # print()
-    with open('cardlist.csv', 'rt') as inp:
-        reader = csv.reader(inp)
-        row = next(reader)
-        row = next(reader)
+    for item in db:
+        url = item.get('cardLink')
+        lowest_price = item.get('lowestPrice')
+        notification_price = item.get('notificationPrice')
+        card_uuid = item.get('uuid')
 
-        response = requests.get(get_filtered_card(row[0], 1, 2))
-        html = BeautifulSoup(response.text, 'html.parser')
-        lowest_price = html.find("dt", text=["From", "ab"]).findNext("dd").string
-        lowest_price = convert_to_float(lowest_price)
-        if lowest_price < 300:
-            print("Neuer Tiefstpreis: " + str(lowest_price) + "€")
+        response = requests.get(url)
+        price_item = BeautifulSoup(response.text, 'lxml').find("dt", text=["From", "ab"]).findNext("dd").string
+        price = convert_to_float(price_item)
 
-    return "nice"
+        if price != float(lowest_price):
+            db.update({'lowestPrice': price}, Query().cardLink == url)
+
+            if notification_price and price >= float(notification_price):
+                return "nothing to do"
+            else:
+                card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
+                return render_template('mail.html', data=card_info)
+        return "nothing to do"
 
 
 @app.route('/delete/<card_id>')
@@ -46,6 +45,7 @@ def delete_card(card_id):
 def card_stalker():
     if request.method == "POST":
         # TODO popup if successful
+        # TODO run in background
         save_details()
 
     return render_template('index.html')
@@ -57,11 +57,11 @@ def save_details():
     mail = request.form.get("mail")
     notification_price = request.form.get("price")
     unique_id = str(uuid.uuid4())
-    card_link = get_base_url(request.form.get("cardlink")) + '?language={}&isFoil={}'.format(locale, foil)
+    card_link = get_base_url(request.form.get("cardLink")) + '?language={}&isFoil={}'.format(locale, foil)
 
     # grab current price
     response = requests.get(card_link)
-    html = BeautifulSoup(response.text, 'html.parser')
+    html = BeautifulSoup(response.text, 'lxml')
     lowest_price = html.find("dt", text=["From", "ab"]).findNext("dd").string
     lowest_price = convert_to_float(lowest_price)
 
