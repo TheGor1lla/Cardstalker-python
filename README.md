@@ -12,3 +12,4 @@ Simple app to monitor price changes on cardmarket and get notified about it.
 * Prefill Form based on Link parameters
 * Run Notifier every hour(?)
 * do things sequentiell
+* Github CI

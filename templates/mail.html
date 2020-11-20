@@ -6,13 +6,13 @@
 
 </head>
 <body>
-Price update for: {{data[0]}}<br>
+Price update for <a href="{{data.url}}">{{data.url}}</a><br>
 <br>
-Old Price was {{data[1]}} €<br>
-New Price is {{data[2]}} €<br>
+Old Price was {{data.lowest_price}} €<br>
+New Price is {{data.price}} €<br>
 <br>
 
-To delete this stalker, click <a href="{{ url_for('delete_card', card_id=data[3]) }}">here</a>
+To delete this stalker, click <a href="{{ url_for('delete_card', card_id=data.uuid) }}">here</a>
 
 </body>
 </html>
