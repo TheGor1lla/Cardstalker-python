@@ -54,6 +54,7 @@ def check_card():
                 card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
             return render_template('mail2.html', data=card_info)
         app.logger.info("Nothing new for "+url)
+                    msg.html = render_template('mail.html', data=card_info)
 
 
 @app.route('/delete/<card_id>')
