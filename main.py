@@ -90,6 +90,7 @@ def save_details():
     html = BeautifulSoup(response.text, 'lxml')
     lowest_price = html.find("dt", text=["From", "ab"]).findNext("dd").string
     lowest_price = convert_to_float(lowest_price)
+    notification_price = convert_to_float(notification_price)
 
     db.insert({'cardLink': card_link,
                'locale': locale,
