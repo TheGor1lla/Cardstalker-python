@@ -1,15 +1,34 @@
+import os
 import uuid
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, request
 from tinydb import TinyDB, Query
+from apscheduler.schedulers.background import BackgroundScheduler
+import logging
+from logging.handlers import SMTPHandler
 
 app = Flask(__name__)
 db = TinyDB('./db.json')
+scheduler = BackgroundScheduler(daemon=True)
+
+mail_handler = SMTPHandler(
+    mailhost='127.0.0.1',
+    fromaddr='cardstalker@gor1lla.de',
+    toaddrs=['admin@gor1lla.de'],
+    subject='Application Error'
+)
+mail_handler.setLevel(logging.ERROR)
+mail_handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+))
+
+if not app.debug:
+    app.logger.addHandler(mail_handler)
 
 
-@app.route('/check_card')
 def check_card():
     for item in db:
         url = item.get('cardLink')
@@ -25,11 +44,11 @@ def check_card():
             db.update({'lowestPrice': price}, Query().cardLink == url)
 
             if notification_price and price >= float(notification_price):
-                return "nothing to do"
+                app.logger.info("Nothing new for "+url)
             else:
                 card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
-                return render_template('mail.html', data=card_info)
-        return "nothing to do"
+            return render_template('mail2.html', data=card_info)
+        app.logger.info("Nothing new for "+url)
 
 
 @app.route('/delete/<card_id>')
@@ -83,6 +102,7 @@ def convert_to_float(string):
     price = float(string.replace(',', '.'))
     return price
 
-
 if __name__ == '__main__':
+    scheduler.add_job(check_card(), 'interval', seconds=1)
+    # scheduler.start()
     app.run()
