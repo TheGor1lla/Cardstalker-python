@@ -48,8 +48,8 @@ def check_card():
         if price != float(lowest_price):
             db.update({'lowestPrice': price}, Query().cardLink == url)
 
-            if notification_price and price >= float(notification_price):
-                app.logger.info("Nothing new for "+url)
+            if notification_price and price > float(notification_price):
+                app.logger.info("Nothing new for " + url)
             else:
                 card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
             return render_template('mail2.html', data=card_info)
