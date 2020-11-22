@@ -1,30 +1,27 @@
-import os
+import logging
 import uuid
-from datetime import datetime
+from logging.handlers import SMTPHandler
 
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, request
-from tinydb import TinyDB, Query
-from apscheduler.schedulers.background import BackgroundScheduler
-import logging
-from logging.handlers import SMTPHandler
 from flask_mail import Mail, Message
-
+from tinydb import TinyDB, Query
 
 app = Flask(__name__)
 db = TinyDB('./db.json')
 scheduler = BackgroundScheduler(daemon=True)
 mail = Mail(app)
-msg = Message("Subject", sender="cardstalker@gor1lla.de", recipients=['patrick@gor1lla.de'])
-msg.body = "Mail body"
+# app.config['SERVER_NAME'] = 'gor1lla.de:5000'
 
 mail_handler = SMTPHandler(
     mailhost='127.0.0.1',
-    fromaddr='cardstalker@gor1lla.de',
-    toaddrs=['admin@gor1lla.de'],
-    subject='Application Error'
+    fromaddr='cardstalker@slataghor.gor1lla.de',
+    toaddrs=['security@gor1lla.de'],
+    subject='[Cardstalker] Application Error'
 )
+
 mail_handler.setLevel(logging.ERROR)
 mail_handler.setFormatter(logging.Formatter(
     '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
@@ -40,6 +37,7 @@ def check_card():
         lowest_price = item.get('lowestPrice')
         notification_price = item.get('notificationPrice')
         card_uuid = item.get('uuid')
+        mail_addr = item.get('mail')
 
         response = requests.get(url)
         price_item = BeautifulSoup(response.text, 'lxml').find("dt", text=["From", "ab"]).findNext("dd").string
@@ -51,10 +49,13 @@ def check_card():
             if notification_price and price > float(notification_price):
                 app.logger.info("Nothing new for " + url)
             else:
-                card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
-            return render_template('mail2.html', data=card_info)
-        app.logger.info("Nothing new for "+url)
+                with app.app_context():
+                    card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
+                    msg = Message("Cardnotifier here", sender="cardnotifier@slagathor.gor1lla.de",
+                                  recipients=[mail_addr])
                     msg.html = render_template('mail.html', data=card_info)
+                    mail.send(msg)
+        app.logger.info("Nothing new for " + url)
 
 
 @app.route('/delete/<card_id>')
@@ -63,6 +64,7 @@ def delete_card(card_id):
 
     card_to_delete = db.get(query.uuid == card_id)
     db.remove(query.uuid == card_id)
+    app.logger.info("Deleted " + card_to_delete.get('cardLink'))
     return "{} deleted".format(card_to_delete.get('cardLink'))
 
 
@@ -72,7 +74,6 @@ def card_stalker():
         # TODO popup if successful
         # TODO run in background
         save_details()
-        mail.send(msg)
 
     return render_template('index.html')
 
@@ -80,7 +81,7 @@ def card_stalker():
 def save_details():
     locale = request.form.get("locale")
     foil = request.form.get("foil")
-    mail = request.form.get("mail")
+    mail_form = request.form.get("mail")
     notification_price = request.form.get("price")
     unique_id = str(uuid.uuid4())
     card_link = get_base_url(request.form.get("cardLink")) + '?language={}&isFoil={}'.format(locale, foil)
@@ -95,10 +96,12 @@ def save_details():
     db.insert({'cardLink': card_link,
                'locale': locale,
                'foil': foil,
-               'mail': mail,
+               'mail': mail_form,
                'notificationPrice': notification_price,
                'uuid': unique_id,
                'lowestPrice': lowest_price})
+
+    app.logger.info("Added " + card_link + " for " + mail_form)
 
 
 def get_base_url(url):
@@ -110,7 +113,9 @@ def convert_to_float(string):
     price = float(string.replace(',', '.'))
     return price
 
+
 if __name__ == '__main__':
-    scheduler.add_job(check_card(), 'interval', seconds=1)
-    # scheduler.start()
+    scheduler.add_job(check_card, 'interval', hours=1)
+    scheduler.start()
     app.run()
+    # app.run(host='0.0.0.0', port=5000)
