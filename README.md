@@ -14,3 +14,4 @@ Simple app to monitor price changes on cardmarket and get notified about it.
 * do things sequentiell
 * Github CI
 * Logging
+* own app user

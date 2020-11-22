@@ -9,10 +9,15 @@ from tinydb import TinyDB, Query
 from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 from logging.handlers import SMTPHandler
+from flask_mail import Mail, Message
+
 
 app = Flask(__name__)
 db = TinyDB('./db.json')
 scheduler = BackgroundScheduler(daemon=True)
+mail = Mail(app)
+msg = Message("Subject", sender="cardstalker@gor1lla.de", recipients=['patrick@gor1lla.de'])
+msg.body = "Mail body"
 
 mail_handler = SMTPHandler(
     mailhost='127.0.0.1',
@@ -66,6 +71,7 @@ def card_stalker():
         # TODO popup if successful
         # TODO run in background
         save_details()
+        mail.send(msg)
 
     return render_template('index.html')
 
