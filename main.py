@@ -40,7 +40,7 @@ def check_card():
         mail_addr = item.get('mail')
 
         response = requests.get(url)
-        price_item = BeautifulSoup(response.text, 'lxml').find("dt", text=["From", "ab"]).findNext("dd").string
+        price_item = BeautifulSoup(response.text, 'lxml').find("dt", text=["From", "ab", "Available from"]).findNext("dd").string
         # ToDo if not N/A
         price = convert_price_to_float(price_item)
 
