@@ -41,7 +41,8 @@ def check_card():
 
         response = requests.get(url)
         price_item = BeautifulSoup(response.text, 'lxml').find("dt", text=["From", "ab"]).findNext("dd").string
-        price = convert_to_float(price_item)
+        # ToDo if not N/A
+        price = convert_price_to_float(price_item)
 
         if price != float(lowest_price):
             db.update({'lowestPrice': price}, Query().cardLink == url)
@@ -91,9 +92,11 @@ def save_details():
     response = requests.get(card_link)
     html = BeautifulSoup(response.text, 'lxml')
     lowest_price = html.find("dt", text=["From", "ab"]).findNext("dd").string
-    lowest_price = convert_to_float(lowest_price)
-    # ToDo this shouldnt be cut
-    notification_price = convert_to_float(notification_price)
+    # ToDo if not N/A
+    lowest_price = convert_price_to_float(lowest_price)
+
+    if notification_price:
+        notification_price = float(notification_price)
 
     db.insert({'cardLink': card_link,
                'locale': locale,
@@ -110,7 +113,7 @@ def get_base_url(url):
     return url.split('?')[0]
 
 
-def convert_to_float(string):
+def convert_price_to_float(string):
     string = string[:-2]
     price = float(string.replace(',', '.'))
     return price
