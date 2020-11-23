@@ -3,7 +3,6 @@
 Simple, self-hostable app to monitor price changes on cardmarket and get notified about it.
 
 ## ToDo v1.0
-* fix Delete link
 * use env
 * Logging
 
@@ -19,3 +18,4 @@ Simple, self-hostable app to monitor price changes on cardmarket and get notifie
 * own app user
 * mailkrempel auslagern
 * add image for mail
+* fix NA price
