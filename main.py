@@ -55,6 +55,7 @@ def check_card():
                                   recipients=[mail_addr])
                     msg.html = render_template('mail.html', data=card_info)
                     mail.send(msg)
+                    app.logger.info("Sent mail for ")
         app.logger.info("Nothing new for " + url)
 
 
