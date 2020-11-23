@@ -308,7 +308,7 @@ ul.social li{
                                          style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
                                     <h3 class="name">New price: {{data.price}} €</h3>
                                     <span class="position">Old price: {{data.lowest_price}} €</span>
-                                    <p><a href="{{ url_for('delete_card', card_id=data.uuid) }}" class="btn-custom">Delete
+                                    <p><a href="{{ url_for('delete_card', card_id=data.card_uuid) }}" class="btn-custom">Delete
                                         Cardstalker</a></p>
                                 </div>
                             </td>
