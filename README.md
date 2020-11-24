@@ -4,14 +4,16 @@ Simple, self-hostable app to monitor price changes on cardmarket and get notifie
 
 ## ToDo v1.0
 * use env
-* Logging
+* Logging:
+  + Error via mail
+  + Rest Rotating File Handler
 
 
 ## ToDo
 * docker it
 * switch to Cardmarket API
 * fix ToDos
-* check form for cardmarkket url
+* check form for cardmarket url
 * Prefill Form based on Link parameters
 * do things sequentiell
 * Github CI
@@ -19,3 +21,5 @@ Simple, self-hostable app to monitor price changes on cardmarket and get notifie
 * mailkrempel auslagern
 * add image for mail
 * fix NA price
+* Flask Prod Server
+* Foil= Any might be borked (language="3\"")
