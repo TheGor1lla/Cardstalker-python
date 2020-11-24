@@ -304,8 +304,7 @@ ul.social li{
                             <td style="text-align: center;">
                                 <div class="text-author">
                                     <!--add card pic-->
-                                    <img src="images/mtg_back.bmp" alt="../images/mtg_back.bmp"
-                                         style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+                                    <img src="static/img/mtgback.jpg" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
                                     <h3 class="name">New price: {{data.price}} €</h3>
                                     <span class="position">Old price: {{data.lowest_price}} €</span>
                                     <p><a href="{{ url_for('delete_card', card_id=data.card_uuid) }}" class="btn-custom">Delete
