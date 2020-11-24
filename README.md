@@ -23,3 +23,4 @@ Simple, self-hostable app to monitor price changes on cardmarket and get notifie
 * fix NA price
 * Flask Prod Server
 * Foil= Any might be borked (language="3\"")
+* i18n
