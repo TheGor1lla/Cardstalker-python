@@ -12,9 +12,9 @@ from tinydb import TinyDB, Query
 app = Flask(__name__)
 db = TinyDB('./db.json')
 scheduler = BackgroundScheduler(daemon=True)
-mail = Mail(app)
 app.config.from_object('config.DevConfig')
 # app.config.from_object('config.ProdConfig')
+mail = Mail(app)
 
 
 mail_handler = SMTPHandler(
@@ -61,10 +61,6 @@ def check_card():
                                     + ", price changed from " + str(lowest_price) + " to " + str(price))
         app.logger.info("Nothing new for " + url)
 
-
-@app.route('/error')
-def test():
-    return 3/0
 
 @app.route('/delete/<card_id>')
 def delete_card(card_id):
