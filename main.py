@@ -13,11 +13,13 @@ app = Flask(__name__)
 db = TinyDB('./db.json')
 scheduler = BackgroundScheduler(daemon=True)
 mail = Mail(app)
-# app.config['SERVER_NAME'] = 'gor1lla.de:5000'
+app.config.from_object('config.DevConfig')
+# app.config.from_object('config.ProdConfig')
+
 
 mail_handler = SMTPHandler(
     mailhost='127.0.0.1',
-    fromaddr='cardstalker@slataghor.gor1lla.de',
+    fromaddr='cardstalker@slagathor.gor1lla.de',
     toaddrs=['security@gor1lla.de'],
     subject='[Cardstalker] Application Error'
 )
@@ -52,14 +54,17 @@ def check_card():
             else:
                 with app.app_context():
                     card_info = {'url': url, 'lowest_price': lowest_price, 'price': price, 'card_uuid': card_uuid}
-                    msg = Message("Cardnotifier here", sender="cardnotifier@slagathor.gor1lla.de",
-                                  recipients=[mail_addr])
+                    msg = Message("Cardnotifier here", recipients=[mail_addr])
                     msg.html = render_template('mail.html', data=card_info)
                     mail.send(msg)
-                    app.logger.info("Sent mail for "+ url + " to " + mail_addr
-                                    + ", price changed from " + lowest_price + " to " + price)
+                    app.logger.info("Sent mail for " + url + " to " + mail_addr
+                                    + ", price changed from " + str(lowest_price) + " to " + str(price))
         app.logger.info("Nothing new for " + url)
 
+
+@app.route('/error')
+def test():
+    return 3/0
 
 @app.route('/delete/<card_id>')
 def delete_card(card_id):
