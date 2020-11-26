@@ -9,7 +9,7 @@ Then run the app with python3.
 ## ToDo v1.0
 * use env
 * Logging:
-  + Error via mail
+  + Error config auslagern
   + Rest Rotating File Handler
 
 
