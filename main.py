@@ -18,10 +18,10 @@ mail = Mail(app)
 
 
 mail_handler = SMTPHandler(
-    mailhost='127.0.0.1',
-    fromaddr='cardstalker@slagathor.gor1lla.de',
-    toaddrs=['security@gor1lla.de'],
-    subject='[Cardstalker] Application Error'
+    mailhost=app.config['MAIL_ERROR_HOST'],
+    fromaddr=app.config['MAIL_ERROR_SENDER_ADDR'],
+    toaddrs=app.config['MAIL_ERROR_TO_ADDR'],
+    subject=app.config['MAIL_ERROR_SUBJECT']
 )
 
 mail_handler.setLevel(logging.ERROR)
