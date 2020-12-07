@@ -28,3 +28,4 @@ Then run the app with python3.
 * Flask Prod Server
 * Foil= Any might be borked (language="3\"")
 * i18n
+* fix /delete/notfound
