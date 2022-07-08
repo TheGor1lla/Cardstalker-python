@@ -126,3 +126,4 @@ dmypy.json
 
 # generated files
 /db.json
+config.py
